@@ -42,7 +42,9 @@ import (
 
 func main() {
 	fmt.Println("Server start")
-	http.HandleFunc("/", server.Handler)
+	// http.HandleFunc("/", server.Handler)
+	http.HandleFunc("/", server.Index)
+	http.HandleFunc("/submission", server.HandleURL)
 
 	err := http.ListenAndServe(":5500", nil)
 	if err != nil {
