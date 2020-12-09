@@ -6,10 +6,63 @@
         <title>Welcome Long 2 short </title>
         <!-- <title>Forms Review</title> -->
     </head>
+      <style>
+        body {
+            background-color: rgb(57, 169, 219);
+            font-family: Rubik, Arial;
+        }
+
+        form {
+            text-align: center;
+            line-height: 25px;
+            height: 80%;
+            overflow: auto;
+        }
+
+        input {
+            line-height: normal;
+        }
+
+        form hr {
+            width: 60%;
+        }
+
+        #header hr {
+             width: 90%;
+        }
+
+        h1 {
+            text-align: center;
+            
+            height: 7vh;
+            
+        }
+
+        #header {
+            font-size: 30px;
+            height: 15vh
+        }
+
+        #overlay {
+            width: 40%;
+            margin: 3% auto;
+            height: 65vh;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 40px;
+        }
+
+        .url label,
+        .alias label {
+            margin-right: 25px;
+        } 
+     </style>
     <body>
         
         <h1>Shorter your URL!</h1>
-        <h2>{{.Original}}{{.Shorten}} </h2>
+        <h2>Original URL</h2>
+        <p>{{.Original}}</p>
+        <h2>Shorten URL</h2>
+        <p>{{.Shorten}} </p>
 
     </body>    	
 </html>

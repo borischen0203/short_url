@@ -1,39 +1,90 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
     <head>
-        <meta charset="utf-8">
+        <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" type="text/css" href="/style.css">
+        <link rel="stylesheet" type="text/css" href="view/style.css">
+        <link rel="stylesheet" type="text/css" href="/view/style.css">
         <title>Welcome Long 2 short </title>
         <!-- <title>Forms Review</title> -->
     </head>
+
+    <style>
+        body {
+            background-color: rgb(57, 169, 219);
+            font-family: Rubik, Arial;
+        }
+
+        form {
+            text-align: center;
+            line-height: 25px;
+            height: 80%;
+            overflow: auto;
+        }
+
+        input {
+            line-height: normal;
+        }
+
+        form hr {
+            width: 60%;
+        }
+
+        #header hr {
+             width: 90%;
+        }
+
+        h1 {
+            text-align: center;
+            
+            height: 7vh;
+            
+        }
+
+        #header {
+            font-size: 30px;
+            height: 15vh
+        }
+
+        #overlay {
+            width: 40%;
+            margin: 3% auto;
+            height: 65vh;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 40px;
+        }
+
+        .url label,
+        .alias label {
+            margin-right: 25px;
+        } 
+     </style>
+
     <body>
         <section id="overlay">
-            <section id="header">
             <div >
-                <form action="submission.html" method="POST">
+                <section id="header">
                     <h1>Create a shortened URL!</h1>
                     <hr>
-            </section>
-
-                </form>
-                </br>
+                </section>
                 </br>
                 <form action="/submission" method="POST">
                     <label for="url">Enter a long URL</label>
                     <br>
-                    <input id="url" type="text" name="url" >
-                    <br>
-                    <Label for="alias"> Custom alias </Label>
+                    <input id="url" type="text" name="url" style="width: 375px">
                     <br>
                     <br>
-                    <tt class="basecontent">https://BorisLongToShort.com/</tt>
+                    <label for="alias"> Custom alias (Optional) </label>
+                    <br>
+                    <tt class="basecontent">http://borisLongToShort.com/</tt>
                     <input id="alias" type="text" name="alias">
-                    <br>
+                    <!-- <small id='alias' style="display:none"> error input</small> -->
                     <br>
                     <input type="submit" value="Submit">
                 </form>
 
-        </div>
+            </div>
 
         
         </section>
