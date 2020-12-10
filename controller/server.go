@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"net/http"
 	"regexp"
+
+	"github.com/gorilla/mux"
 )
 
 type pageData struct {
@@ -24,8 +26,6 @@ func Init() {
 	tpl = template.Must(template.ParseGlob("view/*.html"))
 }
 
-var count int
-
 /**
  * This function show the index page
  *
@@ -34,6 +34,7 @@ var count int
  *
  */
 func Index(writer http.ResponseWriter, request *http.Request) {
+	fmt.Println("show home page")
 	Init()
 	tpl.ExecuteTemplate(writer, "app.html", nil)
 
@@ -57,6 +58,20 @@ func Index(writer http.ResponseWriter, request *http.Request) {
 // 	// data.Short_url = "This is short_url"
 // 	//template.Execute(writer, nil)
 // }
+
+func CreateURL(writer http.ResponseWriter, request *http.Request) {
+
+}
+
+// func GetURL(writer http.ResponseWriter, request *http.Request) {
+
+// }
+
+func JumpURL(writer http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	fmt.Println(vars)
+	http.Redirect(writer, request, "https://www.youtube.com/", 301)
+}
 
 func HandleURL(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("into URL Handler")
