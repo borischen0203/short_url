@@ -1,4 +1,4 @@
-package mongodb
+package main
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -52,7 +53,8 @@ func InitMongoDB() *mongo.Client {
 	return client
 }
 
-func Insert(collection *mongo.Collection, doc *MatchingURL) {
+//InsertData function insert URL data into collection
+func InsertData(collection *mongo.Collection, doc *MatchingURL) {
 	// collection := c.Database("url_database").Collection("url_table")
 	_, err := collection.InsertOne(context.TODO(), &doc)
 	if err != nil {
@@ -68,6 +70,90 @@ func SearchURL(collection *mongo.Collection, s string) {
 	// }
 	// return false
 	// fmt.Println(result)
+}
+
+//RequestData data is from the request
+// type RequestData struct {
+// 	OriginalURL string `bson:"originalURL,omitempty"`
+// 	CustomAlias string `bson:"customAlias,omitempty"`
+// }
+type RequestData struct {
+	OriginalURL string `json:"originalURL,omitempty"`
+	CustomAlias string `json:"customAlias,omitempty"`
+	ShortURL    string `json:"shortURL,omitempty"`
+}
+
+//ResponseData data is from the request
+type ResponseData struct {
+	OriginalURL string `json:"originalURL,omitempty"`
+	ShortURL    string `json:"shortURL,omitempty"`
+}
+
+func main() {
+	fmt.Println("Starting the MongoDB")
+	InitRun()
+	collection := MongoClient.Database("url_database").Collection("url_table")
+	// reqData := RequestData{
+	// 	OriginalURL: "https://google.com",
+	// }
+
+	var findOne ResponseData
+	collection.FindOne(context.Background(), bson.M{"OriginalURL": "https://www.linkedin.com"}).Decode(&findOne)
+	// if findOne == nil {
+	// 	collection.InsertOne(context.TODO(), bson.M{"OriginalURL": "https://www.linkedin.com", "ShortURL": "http://localhost:8000/778899"})
+	// 	fmt.Println("insert successful")
+	// }
+	fmt.Println(findOne == ResponseData{})
+	if (findOne != ResponseData{}) {
+		fmt.Println("ok")
+	}
+
+	// if findOne["OriginalURL"] == nil {
+	// 	fmt.Println("nil", findOne["OriginalURL"])
+	// } else {
+	// 	fmt.Println(findOne["OriginalURL"])
+	// }
+
+	// req, err := collection.Find(context.TODO(), bson.M{})
+
+	// err := collection.FindOne(context.Background(), bson.M{"OriginalURL": "https://www.youtube.com/"}).Decode(&findOne)
+	// err := collection.FindOne(context.Background(), bson.M{"ShortURL": bson.M{"OriginalURL": "https://www.youtube.com"}}).Decode(&findOne)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Println(findOne == nil)
+	// fmt.Println(findOne)
+	// var find RequestData
+	// cur, _ := collection.Find(context.Background(), bson.M{"OriginalURL": bson.M{"ShortURL": "https://www.youtube.com"}})
+	// cur.Decode(&find)
+	// fmt.Println(cur)
+
+	// var find RequestData
+	// // collection := MongoClient.Database("url_database").Collection("url_table")
+	// // req, err = collection.CountDocuments(context.TODO(), bson.M{"OriginalURL": "https://google.com"})
+	// findCursor, err := collection.Find(context.Background(), bson.M{"OriginalURL": "https://www.google.com/"}).Decode(&find)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// findCursor.Decode(&find)
+	// fmt.Println(find)
+
+	// fmt.Println(find.OriginalURL)
+
+	// var findLogic RequestData
+	// logicFilter := bson.M{
+	// 	"$and": bson.A{
+	// 		bson.M{"custom": bson.M{"$gt": false}},
+	// 		bson.M{"originalURL": bson.M{"$gt": "https://google.com/"}},
+	// 	},
+	// }
+	// findLogicRes, err := collection.Find(context.Background(), logicFilter)
+	// err = findLogicRes.Decode(&findLogic)
+	// if err != nil {
+	// 	fmt.Println("This ", err)
+	// }
+	// fmt.Println(findLogic)
+
 }
 
 // func main() {
