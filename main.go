@@ -12,8 +12,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	d "module/mongodb"
 	"net/http"
 	"time"
+
 	"github.com/gorilla/mux"
 	"github.com/speps/go-hashids"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -101,6 +103,7 @@ func RootEndPoint(w http.ResponseWriter, r *http.Request) {
 func main() {
 	fmt.Println("Server start")
 	router := mux.NewRouter()
+	d.InitRun()
 	// DB.InitRun()
 	// database, err := DB.MongoClient.ListDatabaseNames(context.TODO(), bson.M{})
 	// if err != nil {
