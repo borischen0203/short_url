@@ -16,25 +16,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type pageData struct {
-	Title   string
-	Alias   string
-	LongURL string
-}
-
-// type RequestData struct {
-// 	OriginalURL string `json:"originalURL,omitempty"`
-// 	CustomAlias string `json:"customAlias,omitempty"`
-// 	ShortURL    string `json:"shortURL,omitempty"`
-// }
-
-type MyUrl struct {
-	ID       string `json:"id,omitempty`
-	LongURL  string `json:"longURL,omitempty"`
-	ShortURL string `json:"shortURL,omitempty"`
-}
-
 var tpl *template.Template
+var hostNumber string
 
 //RequestData data is from the request
 // type RequestData struct {
@@ -50,6 +33,7 @@ var tpl *template.Template
 
 func Init() {
 	tpl = template.Must(template.ParseGlob("view/*.html"))
+
 }
 
 /**
@@ -62,6 +46,7 @@ func Init() {
 func Index(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("show home page")
 	Init()
+	hostNumber = request.Host
 	tpl.ExecuteTemplate(writer, "app.html", nil)
 }
 
@@ -86,11 +71,14 @@ func Index(writer http.ResponseWriter, request *http.Request) {
 
 type RequestData struct {
 	OriginalURL string `json:"originalURL,omitempty"`
+	Alias       string `json:"alias,omitempty"`
 }
+
 type ResponseData struct {
 	OriginalURL string `json:"originalURL,omitempty"`
 	ShortURL    string `json:"shortURL,omitempty"`
 	ID          string `json:"id,omitempty"`
+	IsAlias     bool   `json:"isAlias,omitempty"`
 }
 
 //CreateEndPoint do
@@ -132,30 +120,73 @@ func CreateEndPoint(w http.ResponseWriter, r *http.Request) {
 
 //CreateURL function create a new short URL
 func CreateURL(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("into createEndpoint function")
-	str := (r.FormValue("originalURL"))
-	request := strings.TrimSpace(str)
-	// var request RequestData
+	fmt.Println("into createURL function")
+	var request RequestData
+	str := r.FormValue("originalURL")
+	fmt.Println("The Host Number is" + hostNumber)
+	request.OriginalURL = strings.TrimSpace(str)
+	request.Alias = r.FormValue("alias")
 	collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
+
 	var response ResponseData
-	//check the longURL exist or not
-	// var findOne bson.M
-	collection.FindOne(context.Background(), bson.M{"OriginalURL": request}).Decode(&response)
+	collection.FindOne(context.Background(), bson.M{"OriginalURL": request.OriginalURL}).Decode(&response)
+	fmt.Println("Input URL:", response.OriginalURL)
+
+	if request.Alias == "" { //No Custom Alias input
+		CreateURLWithoutAlias(w, response, request)
+	} else {
+		tpl.ExecuteTemplate(w, "create.html", response)
+		fmt.Println("Custom Alias input(finish later)")
+	}
+
 	// fmt.Println(findOne["ShortURL"])
-	if (response == ResponseData{}) { //if the long URL does not exist, create new one
+	// if (response == ResponseData{}) { //if the long URL does not exist, create new one
+	// 	response.ID = ProduceUniqueID()
+	// 	response.ShortURL = "http://localhost:8000/" + response.ID
+	// 	response.OriginalURL = request.OriginalURL
+	// 	collection.InsertOne(context.TODO(), bson.M{
+	// 		"ID":          response.ID,
+	// 		"OriginalURL": response.OriginalURL,
+	// 		"ShortURL":    response.ShortURL})
+	// 	fmt.Println("Insert successful")
+	// } else {
+	// 	fmt.Println("The Original URL exists")
+	// }
+	// tpl.ExecuteTemplate(w, "create.html", response)
+	fmt.Println("Send respond successful")
+}
+
+//CreateURLWithoutAlias handle the condition that user dose not entry alias
+func CreateURLWithoutAlias(w http.ResponseWriter, response ResponseData, request RequestData) {
+	/**
+	 *  The response is the result of query with Original URL
+	 *	if the response is empty, then create a new short URL
+	 *
+	 * 	Or the response is not empty, but the Original URL had a custom alias URL, it should
+	 *  also create a new short URL
+	 */
+
+	collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
+	if (response == ResponseData{} || response.IsAlias == true) {
+		// check condition1 or condition2, delete this line later
+		if (response == ResponseData{}) {
+			fmt.Println("Condition1: Input URL does not exist")
+		} else {
+			fmt.Println("Condition2: Input URL exist, but it a custom alias URL")
+		}
 		response.ID = ProduceUniqueID()
-		response.ShortURL = "http://localhost:8000/" + response.ID
-		response.OriginalURL = request
+		response.ShortURL = "http://" + hostNumber + "/" + response.ID
+		response.OriginalURL = request.OriginalURL
 		collection.InsertOne(context.TODO(), bson.M{
 			"ID":          response.ID,
 			"OriginalURL": response.OriginalURL,
-			"ShortURL":    response.ShortURL})
+			"ShortURL":    response.ShortURL,
+			"IsAlias":     false})
 		fmt.Println("Insert successful")
-	} else {
-		fmt.Println("The Original URL exists")
+
 	}
 	tpl.ExecuteTemplate(w, "create.html", response)
-	fmt.Println("Send respond successful")
+	fmt.Println("Create short URL without custom alias  successful")
 }
 
 //Redirect Function redirect the link to long URL
@@ -182,7 +213,6 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 func ProduceUniqueID() string {
 	h, _ := hashids.NewWithData(hashids.NewData())
 	now := time.Now()
-	fmt.Println(now)
 	ID, _ := h.Encode([]int{int(now.Unix())})
 	return ID
 }
