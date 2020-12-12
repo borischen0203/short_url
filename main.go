@@ -15,11 +15,13 @@ import (
 	"log"
 
 	"net/http"
+	server "short_url/controller"
 	mongoDB "short_url/module"
 	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/speps/go-hashids"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -89,31 +91,43 @@ func CreateEndPoint(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func RootEndPoint(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("into EndPoint")
-	// params :=mux.Vars(r)
-	/**
-	 * write a query to find the longURL
-	 *
-	 *
-	 *
-	 */
-	AlongURL := "https://google.com"
-	http.Redirect(w, r, AlongURL, 301)
+type ResponseData struct {
+	OriginalURL string `json:"originalURL,omitempty"`
+	ShortURL    string `json:"shortURL,omitempty"`
+	ID          string `json:"id,omitempty"`
+}
 
+func RootEndPoint(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("into RootEndPoint")
+	params := mux.Vars(r)
+	fmt.Println(params["id"])
+
+	collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
+	//Find the Short URL
+	var response ResponseData
+	collection.FindOne(context.Background(), bson.M{"ID": params["id"]}).Decode(&response)
+	// if err != nil {
+	if (response == ResponseData{}) {
+		w.WriteHeader(404)
+		// w.Write([]byte(err.Error()))
+		return
+	}
+	http.Redirect(w, r, response.OriginalURL, 301)
+	fmt.Println("send request successful")
+	// http.Redirect(w, r, "https://www.google.com/", 301)
 }
 
 func main() {
 	fmt.Println("Server start")
 	router := mux.NewRouter()
 	mongoDB.InitRun()
-	database, err := mongoDB.MongoClient.ListDatabaseNames(context.TODO(), bson.M{})
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(database)
-	collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
-	fmt.Println("This collection", collection)
+	// database, err := mongoDB.MongoClient.ListDatabaseNames(context.TODO(), bson.M{})
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Println(database)
+	// collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
+	// fmt.Println("This collection", collection)
 
 	// fmt.Println("Starting the MongoDB")
 	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -132,7 +146,7 @@ func main() {
 	// router.HandleFunc("/{name}", controller.JumpURL)
 	// http.HandleFunc("/jump", controller.JumpURL)
 	// router.HandleFunc("/long2short", getURL).Methods("GET")
-	router.HandleFunc("/create", CreateEndPoint).Methods("POST")
+	router.HandleFunc("/create", server.CreateEndPoint).Methods("POST")
 	router.HandleFunc("/expand", ExpandEndPoint).Methods("GET")
 	router.HandleFunc("/{id}", RootEndPoint).Methods("GET") //into shortURL ->redirection
 

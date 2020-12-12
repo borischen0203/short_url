@@ -16,8 +16,7 @@ import (
 )
 
 type pageData struct {
-	Title string
-
+	Title   string
 	Alias   string
 	LongURL string
 }
@@ -110,21 +109,45 @@ func CreateEndPoint(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println(findOne["ShortURL"])
 	if (response == ResponseData{}) { //if the long URL does not exist, create new one
 		response.ID = ProduceUniqueID()
-		response.ShortURL = "http://localhost:8000/" + ProduceUniqueID()
+		response.ShortURL = "http://localhost:8000/" + response.ID
+		response.OriginalURL = request.OriginalURL
 		collection.InsertOne(context.TODO(), bson.M{
-			"OriginalURL": request.OriginalURL,
+			"ID":          response.ID,
+			"OriginalURL": response.OriginalURL,
 			"ShortURL":    response.ShortURL})
 		fmt.Println("insert successful")
+	} else {
+		fmt.Println("The Original URL exist")
 	}
-
 	// err =
 	//  if err!=nil{
-	// 	w.WriterHeader(401)
+	// 	w.WriteHeader(401)
 	// 	w.Write([]byte(err.Error()))
 	// 	return
 	// }
 	json.NewEncoder(w).Encode(response)
+	fmt.Println("Send respond successful")
 
+}
+
+//RootEndPoint Function redirect the link to long URL
+func RootEndPoint(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("into RootEndPoint")
+	params := mux.Vars(r)
+	fmt.Println(params["id"])
+
+	collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
+	//Find the Short URL
+	var response ResponseData
+	collection.FindOne(context.Background(), bson.M{"ID": params["id"]}).Decode(&response)
+	// if err != nil {
+	if (response == ResponseData{}) {
+		w.WriteHeader(404)
+		// w.Write([]byte(err.Error()))
+		return
+	}
+	http.Redirect(w, r, response.OriginalURL, 301)
+	fmt.Println("send request successful")
 }
 
 //ProduceUniqueID return a unique ID
