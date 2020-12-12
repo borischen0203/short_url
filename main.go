@@ -141,16 +141,15 @@ func main() {
 	// bucket := client.Database("url_database").Collection("url_table")
 	// fmt.Println(bucket)
 	// http.HandleFunc("/", server.Handler)
-	// http.HandleFunc("/", controller.Index)
+	router.HandleFunc("/", server.Index)
 	// r.HandleFunc("/submission",).Methods("POST")
 	// router.HandleFunc("/{name}", controller.JumpURL)
-	// http.HandleFunc("/jump", controller.JumpURL)
-	// router.HandleFunc("/long2short", getURL).Methods("GET")
-	router.HandleFunc("/create", server.CreateEndPoint).Methods("POST")
-	router.HandleFunc("/expand", ExpandEndPoint).Methods("GET")
+
+	router.HandleFunc("/submission", server.CreateURL).Methods("POST")
 	router.HandleFunc("/{id}", RootEndPoint).Methods("GET") //into shortURL ->redirection
 
-	// http.HandleFunc("/submission", controller.HandleURL)
+	// router.HandleFunc("/create", server.CreateEndPoint).Methods("POST")
+	router.HandleFunc("/expand", ExpandEndPoint).Methods("GET")
 
 	// err := http.ListenAndServe(":8000", router)
 	// if err != nil {

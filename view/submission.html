@@ -39,14 +39,14 @@
         }
 
         #header {
+            height: 15vh;
             font-size: 30px;
-            height: 15vh
         }
 
         #overlay {
             width: 40%;
             margin: 3% auto;
-            height: 65vh;
+            height: 65vh auto;
             background-color: rgba(255, 255, 255, 0.9);
             border-radius: 40px;
         }
@@ -57,12 +57,33 @@
         } 
      </style>
     <body>
-        
-        <h1>Shorter your URL!</h1>
+        <section id="overlay">
+            <div >
+                <section id="header">
+                    
+                    <h1>Short URL was created!</h1>
+                    <hr>
+                </section>
+                </br>
+                <form action="/" >
+                    <h2>The Original URL:</h2>
+                    <p>{{.OriginalURL}}</p>
+                    <h2>The Short URL:</h2>
+                    <p>{{.ShortURL}}</p>
+                    <!-- <a id="copy_div" href={{.ShortURL}} onclick="return false;" data-clipboard-text={{.ShortURL}} style="display: inline;">
+                        <small>[Copy to clipboard]</small>
+                    </a> -->
+                    <br>
+                    <input type="submit" value="Back">
+                </form>
+
+            </div>
+        </section>
+        <!-- <h1>Shorter your URL!</h1>
         <h2>Original URL</h2>
         <p>{{.Original}}</p>
         <h2>Shorten URL</h2>
-        <p>{{.Shorten}} </p>
+        <p>{{.Shorten}} </p> -->
 
     </body>    	
 </html>

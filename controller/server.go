@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"regexp"
 	mongoDB "short_url/module"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -62,7 +63,6 @@ func Index(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("show home page")
 	Init()
 	tpl.ExecuteTemplate(writer, "app.html", nil)
-
 }
 
 // func Handler(writer http.ResponseWriter, request *http.Request) {
@@ -130,6 +130,41 @@ func CreateEndPoint(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//CreateURL function create a new short URL
+func CreateURL(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("into createEndpoint function")
+	str := (r.FormValue("originalURL"))
+	request := strings.TrimSpace(str)
+	// var request RequestData
+	collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
+	var response ResponseData
+	//check the longURL exist or not
+	// var findOne bson.M
+	collection.FindOne(context.Background(), bson.M{"OriginalURL": request}).Decode(&response)
+	// fmt.Println(findOne["ShortURL"])
+	if (response == ResponseData{}) { //if the long URL does not exist, create new one
+		response.ID = ProduceUniqueID()
+		response.ShortURL = "http://localhost:8000/" + response.ID
+		response.OriginalURL = request
+		collection.InsertOne(context.TODO(), bson.M{
+			"ID":          response.ID,
+			"OriginalURL": response.OriginalURL,
+			"ShortURL":    response.ShortURL})
+		fmt.Println("Insert successful")
+	} else {
+		fmt.Println("The Original URL exists")
+	}
+	// err =
+	//  if err!=nil{
+	// 	w.WriteHeader(401)
+	// 	w.Write([]byte(err.Error()))
+	// 	return
+	// }
+	tpl.ExecuteTemplate(w, "submission.html", response)
+	fmt.Println("Send respond successful")
+
+}
+
 //RootEndPoint Function redirect the link to long URL
 func RootEndPoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("into RootEndPoint")
@@ -157,16 +192,6 @@ func ProduceUniqueID() string {
 	fmt.Println(now)
 	ID, _ := h.Encode([]int{int(now.Unix())})
 	return ID
-}
-
-// func GetURL(writer http.ResponseWriter, request *http.Request) {
-
-// }
-
-func JumpURL(writer http.ResponseWriter, request *http.Request) {
-	vars := mux.Vars(request)
-	fmt.Println(vars)
-	http.Redirect(writer, request, "https://www.youtube.com/", 301)
 }
 
 // func HandleURL(writer http.ResponseWriter, request *http.Request) {
