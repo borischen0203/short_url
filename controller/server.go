@@ -154,23 +154,15 @@ func CreateURL(w http.ResponseWriter, r *http.Request) {
 	} else {
 		fmt.Println("The Original URL exists")
 	}
-	// err =
-	//  if err!=nil{
-	// 	w.WriteHeader(401)
-	// 	w.Write([]byte(err.Error()))
-	// 	return
-	// }
-	tpl.ExecuteTemplate(w, "submission.html", response)
+	tpl.ExecuteTemplate(w, "create.html", response)
 	fmt.Println("Send respond successful")
-
 }
 
-//RootEndPoint Function redirect the link to long URL
-func RootEndPoint(w http.ResponseWriter, r *http.Request) {
+//Redirect Function redirect the link to long URL
+func Redirect(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("into RootEndPoint")
 	params := mux.Vars(r)
 	fmt.Println(params["id"])
-
 	collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
 	//Find the Short URL
 	var response ResponseData
@@ -178,7 +170,8 @@ func RootEndPoint(w http.ResponseWriter, r *http.Request) {
 	// if err != nil {
 	if (response == ResponseData{}) {
 		w.WriteHeader(404)
-		// w.Write([]byte(err.Error()))
+		template := template.Must(template.ParseGlob("view/errPage.html"))
+		template.Execute(w, nil)
 		return
 	}
 	http.Redirect(w, r, response.OriginalURL, 301)

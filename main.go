@@ -12,8 +12,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
-
 	"net/http"
 	server "short_url/controller"
 	mongoDB "short_url/module"
@@ -109,7 +109,12 @@ func RootEndPoint(w http.ResponseWriter, r *http.Request) {
 	// if err != nil {
 	if (response == ResponseData{}) {
 		w.WriteHeader(404)
-		// w.Write([]byte(err.Error()))
+		// w.Write([]byte("<h1>404</h1>"))
+		// w.WriteHeader(http.StatusNotFound)
+		// fmt.Fprintf(w, "Page Not found")
+		template := template.Must(template.ParseGlob("view/errPage.html"))
+		template.Execute(w, nil)
+		fmt.Println("Page Not found")
 		return
 	}
 	http.Redirect(w, r, response.OriginalURL, 301)
@@ -145,8 +150,8 @@ func main() {
 	// r.HandleFunc("/submission",).Methods("POST")
 	// router.HandleFunc("/{name}", controller.JumpURL)
 
-	router.HandleFunc("/submission", server.CreateURL).Methods("POST")
-	router.HandleFunc("/{id}", RootEndPoint).Methods("GET") //into shortURL ->redirection
+	router.HandleFunc("/create", server.CreateURL).Methods("POST")
+	router.HandleFunc("/{id}", server.Redirect).Methods("GET") //into shortURL ->redirection
 
 	// router.HandleFunc("/create", server.CreateEndPoint).Methods("POST")
 	router.HandleFunc("/expand", ExpandEndPoint).Methods("GET")

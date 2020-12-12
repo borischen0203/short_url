@@ -9,7 +9,7 @@ import (
 	// "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
+	// "go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 /**
@@ -46,11 +46,11 @@ func InitMongoDB() *mongo.Client {
 	}
 
 	//check connection timeout
-	err = client.Ping(ctx, readpref.Primary())
-	defer cancel()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// err = client.Ping(ctx, readpref.Primary())
+	// defer cancel()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 	return client
 }
 
