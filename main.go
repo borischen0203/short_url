@@ -30,10 +30,11 @@ func main() {
 	router.HandleFunc("/", server.Index)
 
 	//Creat Short URL
-	router.HandleFunc("/create", server.CreateURL).Methods("POST")
+	// router.HandleFunc("/create", server.CreateURL).Methods("POST")
+	router.HandleFunc("/POST/url_resource", server.CreateURL).Methods("POST")
 
 	//Redirect Original URL
-	router.HandleFunc("/{id}", server.Redirect).Methods("GET")
+	router.HandleFunc("GET/{id}", server.Redirect).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":8000", router))
+	log.Fatal(http.ListenAndServe(":8080", router))
 }

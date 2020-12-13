@@ -70,7 +70,7 @@
                     <hr>
                 </section>
                 </br>
-                <form action="/create" method="POST">
+                <form action="/POST/url_resource" method="POST">
                      <div class="gorup">
                         <label for="originalURL" class="originalURL">Enter a long URL </label> 
                         <br>
@@ -81,7 +81,7 @@
                     <div class="group">
                         <label for="alias"> Custom alias (Optional) </label>
                         <br>
-                        <tt class="basecontent">http://localhost:8000/</tt>
+                        <tt class="basecontent">http://{{.PortNumber}}/</tt>
                         <input id="alias" type="text" name="alias" pattern="[a-zA-Z0-9]">
                         <span class="validity"></span>
                         <p>Note: Custom alias must be valid characters(A-Z,a-z,0-9) .</p>
