@@ -19,18 +19,6 @@ import (
 var tpl *template.Template
 var hostNumber string
 
-//RequestData data is from the request
-// type RequestData struct {
-// 	OriginalURL string `json:"originalURL,omitempty"`
-// 	// CustomAlias string `json:"customAlias,omitempty"`
-// }
-
-//ResponseData data is from the request
-// type ResponseData struct {
-// 	OriginalURL string `json:"originalURL,omitempty"`
-// 	ShortURL    string `json:"shortURL,omitempty"`
-// }
-
 type HostNumber struct {
 	PortNumber string
 }
