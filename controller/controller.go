@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"path"
 	"regexp"
 	mongoDB "short_url/module"
 	"strings"
@@ -19,10 +20,11 @@ import (
 var tpl *template.Template
 var hostNumber string
 
-type HostNumber struct {
-	PortNumber string
-}
+// type HostNumber struct {
+// 	PortNumber string
+// }
 
+//Init function ...
 func Init() {
 	tpl = template.Must(template.ParseGlob("view/*.html"))
 }
@@ -41,7 +43,8 @@ func Index(writer http.ResponseWriter, request *http.Request) {
 	// hostNumber = request.Host
 	// Host.PortNumber = request.Host
 	// tpl.ExecuteTemplate(writer, "app.html", Host)
-	tpl.ExecuteTemplate(writer, "app.html", nil)
+	// tpl.ExecuteTemplate(writer, "app.html", nil)
+	tpl.Execute(writer, "app.html")
 }
 
 // func Handler(writer http.ResponseWriter, request *http.Request) {
@@ -63,11 +66,13 @@ func Index(writer http.ResponseWriter, request *http.Request) {
 // 	//template.Execute(writer, nil)
 // }
 
+//RequestData ...
 type RequestData struct {
 	OriginalURL string `json:"originalURL,omitempty"`
 	Alias       string `json:"alias,omitempty"`
 }
 
+//ResponseData  ...
 type ResponseData struct {
 	OriginalURL string `json:"originalURL,omitempty"`
 	ShortURL    string `json:"shortURL,omitempty"`
@@ -112,20 +117,29 @@ func CreateEndPoint(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//PrefixSlash function ...
+func PrefixSlash(inputURL string) string {
+	url := strings.TrimSpace(inputURL)
+	hasSlash := strings.HasSuffix(url, "/")
+	url = path.Clean(url)
+	if hasSlash && !strings.HasSuffix(url, "/") {
+		url += "/"
+	} else if strings.HasSuffix(url, ".com") {
+		url += "/"
+	}
+	return url
+}
+
 //CreateURL function create a new short URL
 func CreateURL(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("into createURL function")
 	var request RequestData
 	str := r.FormValue("originalURL")
-	fmt.Println("The Host Number is" + hostNumber)
-	request.OriginalURL = strings.TrimSpace(str)
+	// fmt.Println("The Host Number is" + hostNumber)
+	request.OriginalURL = PrefixSlash(str)
 	request.Alias = r.FormValue("alias")
-	// collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
 	fmt.Println("User Input URL:", request.OriginalURL)
 	fmt.Println("User Input Alias:", request.Alias)
-
-	// var response ResponseData
-	// collection.FindOne(context.Background(), bson.M{"OriginalURL": request.OriginalURL}).Decode(&response)
 
 	if request.Alias == "" { //No Custom Alias input
 		CreateWithoutAlias(w, request)
@@ -133,10 +147,6 @@ func CreateURL(w http.ResponseWriter, r *http.Request) {
 		CreateWithAlias(w, request)
 	}
 	fmt.Println("Send respond successful")
-}
-
-func PrefixHead(url string) {
-
 }
 
 //CreateWithAlias handle the condition that user input custom alias
@@ -148,16 +158,20 @@ func CreateWithAlias(w http.ResponseWriter, request RequestData) {
 	var response ResponseData
 	collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
 	collection.FindOne(context.Background(), bson.M{"ID": request.Alias}).Decode(&response)
-
 	if (response == ResponseData{}) { //The custom alias does not exist
 		response.ID = request.Alias
 		response.ShortURL = "http://localhost:8000/" + response.ID
 		response.OriginalURL = request.OriginalURL
-		collection.InsertOne(context.TODO(), bson.M{
+		_, err := collection.InsertOne(context.TODO(), bson.M{
 			"ID":          response.ID,
 			"OriginalURL": response.OriginalURL,
 			"ShortURL":    response.ShortURL,
 			"IsAlias":     true})
+		if err != nil {
+			w.WriteHeader(401)
+			fmt.Println("Insert document error")
+			return
+		}
 		tpl.ExecuteTemplate(w, "create.html", response)
 		fmt.Println("Insert custom alias to DB successful")
 	} else if response.OriginalURL != request.OriginalURL {
@@ -182,17 +196,22 @@ func CreateWithoutAlias(w http.ResponseWriter, request RequestData) {
 	var response ResponseData
 	collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
 	collection.FindOne(context.Background(), bson.M{"OriginalURL": request.OriginalURL, "IsAlias": false}).Decode(&response)
+
 	if (response == ResponseData{}) {
 		response.ID = ProduceUniqueID()
 		response.ShortURL = "http://localhost:8000/" + response.ID
 		response.OriginalURL = request.OriginalURL
-		collection.InsertOne(context.TODO(), bson.M{
+		_, err := collection.InsertOne(context.TODO(), bson.M{
 			"ID":          response.ID,
 			"OriginalURL": response.OriginalURL,
 			"ShortURL":    response.ShortURL,
 			"IsAlias":     false})
+		if err != nil {
+			w.WriteHeader(401)
+			fmt.Println("Insert document error")
+			return
+		}
 		fmt.Println("Insert successful")
-
 	}
 	tpl.ExecuteTemplate(w, "create.html", response)
 	fmt.Println("Create short URL without custom alias  successful")
@@ -202,20 +221,16 @@ func CreateWithoutAlias(w http.ResponseWriter, request RequestData) {
 func Redirect(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("into Redirect")
 	params := mux.Vars(r)
-	fmt.Println("Now, ID is:", params["id"])
-	if params["id"] == "" {
-		return
-	}
 	collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
 	//Find the Short URL
 	var response ResponseData
 	collection.FindOne(context.Background(), bson.M{"ID": params["id"]}).Decode(&response)
-	// if err != nil {
-	if (response == ResponseData{}) {
+	if (response != ResponseData{}) {
+		http.Redirect(w, r, response.OriginalURL, 301)
+		fmt.Println("Redirect successful")
+	} else {
 		notFound(w, r)
 	}
-	http.Redirect(w, r, response.OriginalURL, 301)
-	fmt.Println("send request successful")
 }
 
 func notFound(w http.ResponseWriter, r *http.Request) {

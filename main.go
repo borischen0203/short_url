@@ -12,8 +12,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	server "short_url/controller"
-
+	controller "short_url/controller"
 	mongoDB "short_url/module"
 
 	"github.com/gorilla/mux"
@@ -23,18 +22,17 @@ func main() {
 	fmt.Println("Server start")
 	router := mux.NewRouter()
 
-	//Init Database
+	// Init Database
 	mongoDB.InitRun()
 
 	//Show HomePage
-	router.HandleFunc("/", server.Index)
+	router.HandleFunc("/", controller.Index)
 
 	//Creat Short URL
-	// router.HandleFunc("/create", server.CreateURL).Methods("POST")
-	router.HandleFunc("/POST/url_resource", server.CreateURL).Methods("POST")
+	router.HandleFunc("/POST/url_resource", controller.CreateURL).Methods("POST")
 
 	//Redirect Original URL
-	router.HandleFunc("/{id}", server.Redirect).Methods("GET")
+	router.HandleFunc("/{id}", controller.Redirect).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
