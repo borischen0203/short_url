@@ -48,13 +48,3 @@ func InitMongoDB() *mongo.Client {
 	// }
 	return client
 }
-
-//InsertData function insert URL data into collection
-// func InsertData(collection *mongo.Collection, doc *MatchingURL) {
-// 	// collection := c.Database("url_database").Collection("url_table")
-// 	_, err := collection.InsertOne(context.TODO(), &doc)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	// fmt.Println(insertResult)
-// }
