@@ -1,7 +1,7 @@
 # **Go URL Shortner using MongoDB**
 
 <p align="left">
-    <img src="https://i.imgur.com/z2YPfa2.png">
+    <img src="https://i.imgur.com/z2YPfa2.png" alt="Sample"  width="416" height="243" >
     <p align="left">
 </p>
 
@@ -25,7 +25,7 @@
 </p> 
 
 ```
-    6. If the page shows the Alias is not available, please try another one!
+   6. If the page shows the Alias is not available, please try another one!
 ```
 <p align="left">
     <img src="https://i.imgur.com/lbBe18Z.png" alt="Sample"  width="426" height="308" >
