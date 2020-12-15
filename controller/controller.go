@@ -70,13 +70,16 @@ func Index(writer http.ResponseWriter, request *http.Request) {
 //PrefixSlash function ...
 func PrefixSlash(inputURL string) string {
 	url := strings.TrimSpace(inputURL)
-	hasSlash := strings.HasSuffix(url, "/")
+	// hasSlash := strings.HasSuffix(url, "/")
 	url = path.Clean(url)
-	if hasSlash && !strings.HasSuffix(url, "/") {
-		url += "/"
-	} else if strings.HasSuffix(url, ".com") {
+	if !strings.HasSuffix(url, "/") {
 		url += "/"
 	}
+	//  else if strings.HasSuffix(url, ".com") {
+	// 	url += "/"
+	// }
+	url = strings.Replace(url, "https:/", "https://", 1)
+	url = strings.Replace(url, "http:/", "http://", 1)
 	return url
 }
 
@@ -94,16 +97,22 @@ func CreateURL(w http.ResponseWriter, r *http.Request) {
 
 	if request.Alias == "" { //No Custom Alias input
 		fmt.Println("Into No alias process")
-		CreateWithoutAlias(w, request)
+		requestData := CreateWithoutAlias(request)
+		tpl.ExecuteTemplate(w, "create.html", requestData)
 	} else { // With Custom Alias
 		fmt.Println("Into alias process")
-		CreateWithAlias(w, request)
+		requestData := CreateWithAlias(request)
+		if (requestData == ResponseData{}) {
+			tpl.ExecuteTemplate(w, "notAvailable.html", nil)
+		} else {
+			tpl.ExecuteTemplate(w, "create.html", requestData)
+		}
 	}
 	fmt.Println("Send respond successful")
 }
 
 //CreateWithAlias handle the condition that user input custom alias
-func CreateWithAlias(w http.ResponseWriter, request RequestData) {
+func CreateWithAlias(request RequestData) ResponseData {
 	/**
 	 *
 	 *
@@ -115,31 +124,27 @@ func CreateWithAlias(w http.ResponseWriter, request RequestData) {
 		response.ID = request.Alias
 		response.ShortURL = "http://localhost:8000/" + response.ID
 		response.OriginalURL = request.OriginalURL
-		_, err := collection.InsertOne(context.TODO(), bson.M{
+		collection.InsertOne(context.TODO(), bson.M{
 			"ID":          response.ID,
 			"OriginalURL": response.OriginalURL,
 			"ShortURL":    response.ShortURL,
 			"IsAlias":     true})
-		if err != nil {
-			w.WriteHeader(401)
-			fmt.Println("Insert document error")
-			return
-		}
-		tpl.ExecuteTemplate(w, "create.html", response)
-		w.WriteHeader(200)
+		// tpl.ExecuteTemplate(w, "create.html", response)
 		fmt.Println("Insert custom alias to DB successful")
 	} else if response.OriginalURL != request.OriginalURL {
-		tpl.ExecuteTemplate(w, "notAvailable.html", nil)
-	} else {
-		tpl.ExecuteTemplate(w, "create.html", response)
-		fmt.Println("Show Alias result page")
+		// tpl.ExecuteTemplate(w, "notAvailable.html", nil)
+		response = ResponseData{}
 	}
+	// else {
+	// tpl.ExecuteTemplate(w, "create.html", response)
+	// fmt.Println("Show Alias result page")
+	// }
 	fmt.Println("Create short URL with custom alias  successful")
-
+	return response
 }
 
 //CreateWithoutAlias handle the condition that user dose not entry alias
-func CreateWithoutAlias(w http.ResponseWriter, request RequestData) {
+func CreateWithoutAlias(request RequestData) ResponseData {
 	/**
 	 *  The request is the result of query with Original URL
 	 *	if the response is empty, then create a new short URL
@@ -155,21 +160,16 @@ func CreateWithoutAlias(w http.ResponseWriter, request RequestData) {
 		response.ID = ProduceUniqueID()
 		response.ShortURL = "http://localhost:8000/" + response.ID
 		response.OriginalURL = request.OriginalURL
-		_, err := collection.InsertOne(context.TODO(), bson.M{
+		collection.InsertOne(context.TODO(), bson.M{
 			"ID":          response.ID,
 			"OriginalURL": response.OriginalURL,
 			"ShortURL":    response.ShortURL,
 			"IsAlias":     false})
-		if err != nil {
-			w.WriteHeader(401)
-			fmt.Println("Insert document error")
-			return
-		}
-
 		fmt.Println("Insert successful")
 	}
-	tpl.ExecuteTemplate(w, "create.html", response)
+	// tpl.ExecuteTemplate(w, "create.html", response)
 	fmt.Println("Create short URL without custom alias  successful")
+	return response
 }
 
 //Redirect Function redirect the link to long URL
