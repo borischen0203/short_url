@@ -1,3 +1,11 @@
+/**
+ * This file handle the monoDB connection.
+ *
+ * @author Boris
+ * @version 2020-12-09
+ *
+ */
+
 package mongodb
 
 import (
@@ -6,26 +14,19 @@ import (
 	"log"
 	"time"
 
-	// "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-/**
- *	This constructor contains short URL, Original URL and Custom as a string, string and boolean.
- *
- *
- */
-
-//MongoClient .....
+//MongoClient is the variable of mongo.client
 var MongoClient *mongo.Client
 
-//InitRun function
+//InitRun function initialize the database
 func InitRun() {
 	MongoClient = InitMongoDB()
 }
 
-//InitMongoDB function start the mongo Database
+//InitMongoDB function start to connect to mongo Database
 func InitMongoDB() *mongo.Client {
 	fmt.Println("into InitMongoDB")
 	//Build connection
@@ -38,15 +39,9 @@ func InitMongoDB() *mongo.Client {
 		fmt.Println("connect error!")
 		log.Fatal(err)
 	}
-
 	//check connection timeout
 	// if err = client.Ping(ctx, readpref.Primary()); err != nil {
 	// 	panic(err)
-	// }
-	// err = client.Ping(ctx, readpref.Primary())
-	// defer cancel()
-	// if err != nil {
-	// 	log.Fatal(err)
 	// }
 	return client
 }
