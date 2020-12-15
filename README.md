@@ -15,7 +15,7 @@
 #### Instruction:
       1. Download the file and excute main.go file.(make sure you import all necessary package)
       2. Input the long URL in the field[Enter a long URL]
-      3. (Optional)Input the the custom ID in the field[Custom alias]
+      3. (Optional)Input the the custom ID in the field[Custom alias](make sure you input valid characters(A-Z,a-z,0-9))
       4. Submit
       5. Get the short URL!
      
