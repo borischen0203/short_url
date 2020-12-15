@@ -18,6 +18,20 @@ import (
 var tpl *template.Template
 var hostNumber string
 
+//RequestData ...
+type RequestData struct {
+	OriginalURL string `json:"originalURL,omitempty"`
+	Alias       string `json:"alias,omitempty"`
+}
+
+//ResponseData  ...
+type ResponseData struct {
+	OriginalURL string `json:"originalURL,omitempty"`
+	ShortURL    string `json:"shortURL,omitempty"`
+	ID          string `json:"id,omitempty"`
+	IsAlias     bool   `json:"isAlias,omitempty"`
+}
+
 // type HostNumber struct {
 // 	PortNumber string
 // }
@@ -35,22 +49,22 @@ func Index(writer http.ResponseWriter, request *http.Request) {
 	// hostNumber = request.Host
 	// Host.PortNumber = request.Host
 	// tpl.ExecuteTemplate(writer, "app.html", Host)
-	// tpl.ExecuteTemplate(writer, "app.html", nil)
-	tpl.Execute(writer, "app.html")
-}
+	err := tpl.ExecuteTemplate(writer, "index.html", nil)
+	if err != nil {
+		writer.WriteHeader(400)
+		writer.Write([]byte("error load index.html"))
+	}
+	//  else {
 
-//RequestData ...
-type RequestData struct {
-	OriginalURL string `json:"originalURL,omitempty"`
-	Alias       string `json:"alias,omitempty"`
-}
+	// 	writer.WriteHeader(200)
+	// 	// var response ResponseData
+	// 	// response.ID = "1234567"
+	// 	// response.OriginalURL = "google.com"
+	// 	// response.ShortURL = "google.com/1234567"
+	// 	// response.IsAlias = false
+	// 	// json.NewEncoder(writer).Encode(response)
 
-//ResponseData  ...
-type ResponseData struct {
-	OriginalURL string `json:"originalURL,omitempty"`
-	ShortURL    string `json:"shortURL,omitempty"`
-	ID          string `json:"id,omitempty"`
-	IsAlias     bool   `json:"isAlias,omitempty"`
+	// }
 }
 
 //PrefixSlash function ...
@@ -69,17 +83,20 @@ func PrefixSlash(inputURL string) string {
 //CreateURL function create a new short URL
 func CreateURL(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("into createURL function")
+
 	var request RequestData
-	str := r.FormValue("originalURL")
+	str := r.PostFormValue("originalURL")
 	// fmt.Println("The Host Number is" + hostNumber)
 	request.OriginalURL = PrefixSlash(str)
-	request.Alias = r.FormValue("alias")
+	request.Alias = r.PostFormValue("alias")
 	fmt.Println("User Input URL:", request.OriginalURL)
 	fmt.Println("User Input Alias:", request.Alias)
 
 	if request.Alias == "" { //No Custom Alias input
+		fmt.Println("Into No alias process")
 		CreateWithoutAlias(w, request)
 	} else { // With Custom Alias
+		fmt.Println("Into alias process")
 		CreateWithAlias(w, request)
 	}
 	fmt.Println("Send respond successful")
@@ -109,6 +126,7 @@ func CreateWithAlias(w http.ResponseWriter, request RequestData) {
 			return
 		}
 		tpl.ExecuteTemplate(w, "create.html", response)
+		w.WriteHeader(200)
 		fmt.Println("Insert custom alias to DB successful")
 	} else if response.OriginalURL != request.OriginalURL {
 		tpl.ExecuteTemplate(w, "notAvailable.html", nil)
@@ -147,6 +165,7 @@ func CreateWithoutAlias(w http.ResponseWriter, request RequestData) {
 			fmt.Println("Insert document error")
 			return
 		}
+
 		fmt.Println("Insert successful")
 	}
 	tpl.ExecuteTemplate(w, "create.html", response)
