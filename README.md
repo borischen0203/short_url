@@ -1,7 +1,7 @@
 # **Go URL Shortner using MongoDB**
 
 <p align="left">
-    <img src="https://i.imgur.com/z2YPfa2.png" alt="Sample"  width="416" height="243" >
+    <img src="https://i.imgur.com/z2YPfa2.png" alt="Sample"  width="623" height="365" >
     <p align="left">
 </p>
 
