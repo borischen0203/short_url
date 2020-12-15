@@ -1,4 +1,4 @@
-# Go URL Shortner using MongoDB
+# **Go URL Shortner using MongoDB**
 
 <p align="left">
     <img src="https://i.imgur.com/z2YPfa2.png">
@@ -17,8 +17,16 @@
      2. Input the long URL in the field[Enter a long URL]
      3. (Optional)Input the the custom ID in the field[Custom alias]
      4. Submit
-     5. 
+     5. Get the short URL!
+     
 <p align="left">
-    <img src="https://i.imgur.com/B7Q47kh.png">
+    <img src="https://i.imgur.com/B7Q47kh.png" alt="Sample"  width="426" height="308" >
     <p align="left">
+</p> 
+
+```
+   6. If the page shows the Alias is not available, please try another one!
+```
+<p align="left">
+    <img src="https://i.imgur.com/lbBe18Z.png" alt="Sample"  width="426" height="308" >
 </p> 
