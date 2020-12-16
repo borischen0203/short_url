@@ -2,6 +2,10 @@
 <html lang="en" dir="ltr">
     <head>
         <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" type="text/css" href="/style.css">
+        <link rel="stylesheet" type="text/css" href="view/style.css">
+        <link rel="stylesheet" type="text/css" href="/view/style.css">
         <title>Welcome Long 2 short </title>
     </head>
 
@@ -37,6 +41,17 @@
             
         }
 
+        h2 {
+            text-align: center;
+            height: 1vh;
+            
+        }
+        
+        h3 {
+            text-align: center;
+            height: 3vh;
+        }
+
         #header {
             font-size: 30px;
             height: 15vh
@@ -45,10 +60,15 @@
         #overlay {
             width: 40%;
             margin: 3% auto;
-            height: 65vh;
+            height: 65vh auto;
             background-color: rgba(255, 255, 255, 0.9);
             border-radius: 40px;
         }
+         /* #not {
+            margin: 3% auto;
+            height: 65vh auto;
+            border-radius: 40px;
+        } */
 
         .originalURL label,
         .alias label {
@@ -62,10 +82,13 @@
         <section id="overlay">
             <div >
                 <section id="header">
-                    <h1>Create a short URL!</h1>
-                    <hr>
+                   <h1>Create a short URL!</h1>
+                  <hr>
                 </section>
-                </br>
+                <section id="not">
+                <h2 style="color:red" > URL domain banned </h2>
+                <h3>Short URL can't be created, please try again below: </h3>
+                </section>
                 <form action="/POST/url_resource" method="POST">
                      <div class="gorup">
                         <label for="originalURL" class="originalURL">Enter a long URL </label> 
@@ -78,7 +101,7 @@
                         <label for="alias"> Custom alias (Optional) </label>
                         <br>
                         <tt class="basecontent">http://localhost:8000/</tt>
-                        <input id="alias" type="text" name="alias" pattern="[a-zA-Z0-9]{0,30}">
+                        <input id="alias" type="text" name="alias" pattern="[a-zA-Z0-9]+">
                         <span class="validity"></span>
                         <p>Note: Custom alias must be valid characters(A-Z,a-z,0-9) .</p>
                     </div>

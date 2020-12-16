@@ -67,8 +67,11 @@ func Index(writer http.ResponseWriter, request *http.Request) {
 //PrefixSlash function handle input Long URL with duplicate skahes and spaces.
 func PrefixSlash(inputURL string) string {
 	url := strings.TrimSpace(inputURL)
+	hasSlash := strings.HasSuffix(url, "/")
 	url = path.Clean(url)
-	if !strings.HasSuffix(url, "/") {
+	if hasSlash && !strings.HasSuffix(url, "/") {
+		url += "/"
+	} else if strings.HasSuffix(url, ".com") {
 		url += "/"
 	}
 	url = strings.Replace(url, "https:/", "https://", 1)
@@ -86,7 +89,11 @@ func CreateURL(w http.ResponseWriter, r *http.Request) {
 	request.Alias = r.PostFormValue("alias")
 	fmt.Println("User Input URL:", request.OriginalURL)
 	fmt.Println("User Input Alias:", request.Alias)
-
+	forbiddenInput := "http://localhost:8000"
+	if strings.Contains(request.OriginalURL, forbiddenInput) {
+		tpl.ExecuteTemplate(w, "notAvailableDomain.html", nil)
+		return
+	}
 	if request.Alias == "" { //No Custom Alias input
 		fmt.Println("Into No alias process")
 		requestData := CreateWithoutAlias(request)
