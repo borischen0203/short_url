@@ -26,6 +26,11 @@ import (
 var tpl *template.Template
 var hostNumber string
 
+// NotAvailable ....
+type NotAvailable struct {
+	Title string
+}
+
 //RequestData constructor creates two parts: OriginalURL and Alias. which are a string and a string, respectively.
 type RequestData struct {
 	OriginalURL string `json:"originalURL,omitempty"`
@@ -82,6 +87,8 @@ func PrefixSlash(inputURL string) string {
 //CreateURL function create a new short URL and excute the template to show users.
 func CreateURL(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Into createURL function")
+
+	//Get the data from request
 	var request RequestData
 	str := r.PostFormValue("originalURL")
 	// fmt.Println("The Host Number is" + hostNumber)
@@ -89,9 +96,13 @@ func CreateURL(w http.ResponseWriter, r *http.Request) {
 	request.Alias = r.PostFormValue("alias")
 	fmt.Println("User Input URL:", request.OriginalURL)
 	fmt.Println("User Input Alias:", request.Alias)
+
+	var res NotAvailable
+	//Check URL domain, forbidden input http://localhost:8000
 	forbiddenInput := "http://localhost:8000"
 	if strings.Contains(request.OriginalURL, forbiddenInput) {
-		tpl.ExecuteTemplate(w, "notAvailableDomain.html", nil)
+		res.Title = "URL domain banned"
+		tpl.ExecuteTemplate(w, "notAvailable.html", res)
 		return
 	}
 	if request.Alias == "" { //No Custom Alias input
@@ -102,7 +113,8 @@ func CreateURL(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Into alias process")
 		requestData := CreateWithAlias(request)
 		if (requestData == ResponseData{}) { // Custom alias is not available
-			tpl.ExecuteTemplate(w, "notAvailable.html", nil)
+			res.Title = "Alias is not available"
+			tpl.ExecuteTemplate(w, "notAvailable.html", res)
 		} else { //Custom alias is available
 			tpl.ExecuteTemplate(w, "create.html", requestData)
 		}

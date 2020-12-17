@@ -86,7 +86,8 @@
                   <hr>
                 </section>
                 <section id="not">
-                <h2 style="color:red" > Alias is not available</h2>
+                <!-- <h2 style="color:red" > Alias is not available</h2> -->
+                <h2 style="color:red" >{{.Title}}</h2>
                 <h3>Short URL can't be created, please try again below: </h3>
                 </section>
                 <form action="/POST/url_resource" method="POST">
@@ -101,7 +102,7 @@
                         <label for="alias"> Custom alias (Optional) </label>
                         <br>
                         <tt class="basecontent">http://localhost:8000/</tt>
-                        <input id="alias" type="text" name="alias" pattern="[a-zA-Z0-9]+">
+                        <input id="alias" type="text" name="alias" pattern="[a-zA-Z0-9]{0,30}">
                         <span class="validity"></span>
                         <p>Note: Custom alias must be valid characters(A-Z,a-z,0-9) .</p>
                     </div>

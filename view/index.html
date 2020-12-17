@@ -37,6 +37,12 @@
             
         }
 
+         h2 {
+            text-align: center;
+            height: 1vh;
+            
+        }
+
         #header {
             font-size: 30px;
             height: 15vh
@@ -45,7 +51,7 @@
         #overlay {
             width: 40%;
             margin: 3% auto;
-            height: 65vh;
+            height: 65vh auto;
             background-color: rgba(255, 255, 255, 0.9);
             border-radius: 40px;
         }
@@ -65,7 +71,6 @@
                     <h1>Create a short URL!</h1>
                     <hr>
                 </section>
-                </br>
                 <form action="/POST/url_resource" method="POST">
                      <div class="gorup">
                         <label for="originalURL" class="originalURL">Enter a long URL </label> 
