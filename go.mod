@@ -8,4 +8,5 @@ require (
 	github.com/speps/go-hashids v2.0.0+incompatible
 	github.com/stretchr/testify v1.6.1
 	go.mongodb.org/mongo-driver v1.4.4
+	golang.org/x/tools/gopls v0.6.1 // indirect
 )
