@@ -1,1 +1,1 @@
-web: node main.go
+web: main
