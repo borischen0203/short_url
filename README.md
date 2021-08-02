@@ -4,7 +4,7 @@
     This is a prototype of URL Shortener project. You can find the other one that I rewrite
     in my repo. The new version is pure backend part without UI, I used gin framework and
     make code more readable.
-
+    Link: https://github.com/borischen0203/URL-shortener
 
 <p align="left">
     <img src="https://i.imgur.com/z2YPfa2.png" alt="Sample"  width="623" height="365" >
