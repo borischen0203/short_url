@@ -26,11 +26,12 @@
 #### Instruction:
 
       1. Execute main.go file.
-      2. Input the long URL in the field[Enter a long URL].
-      3. (Optional)Input the the custom ID in the field[Custom alias].
+      2. Open browser on http://localhots:8000/
+      3. Input the long URL in the field[Enter a long URL].
+      4. (Optional)Input the the custom ID in the field[Custom alias].
          (make sure you input valid characters(A-Z,a-z,0-9))
-      4. Submit
-      5. Get the short URL!
+      5. Submit
+      6. Get the short URL!
 
 
 <p align="left">
@@ -39,14 +40,14 @@
 </p>
 
 ```
-   6. If the page shows the Alias is not available, please try another one!
+   7. If the page shows the Alias is not available, please try another one!
 ```
 
 <p align="left">
     <img src="https://i.imgur.com/lbBe18Z.png" alt="Sample"  width="426" height="308" >
 </p>
 
-    7. Input the generated short URL in browser, it will redirect to original URL.
+    8. Input the generated short URL in browser, it will redirect to original URL.
 
 ### Tech Stack
     - MongoDB
