@@ -27,7 +27,7 @@ func Router() *mux.Router {
 	mongoDB.InitRun()
 	controller.Init()
 	router.HandleFunc("/", controller.Index).Methods("GET")
-	router.HandleFunc("/POST/url_resource", controller.CreateURL).Methods("POST")
+	router.HandleFunc("/api/url_resource", controller.CreateURL).Methods("POST")
 	router.HandleFunc("/{id}", controller.Redirect).Methods("GET")
 	return router
 }

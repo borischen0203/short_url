@@ -36,17 +36,17 @@
 
         h1 {
             text-align: center;
-            
+
             height: 7vh;
-            
+
         }
 
         h2 {
             text-align: center;
             height: 1vh;
-            
+
         }
-        
+
         h3 {
             text-align: center;
             height: 3vh;
@@ -74,8 +74,8 @@
         .alias label {
              text-align: left;
             margin-right: 30px;
-            
-        } 
+
+        }
      </style>
 
     <body>
@@ -90,9 +90,9 @@
                 <h2 style="color:red" >{{.Title}}</h2>
                 <h3>Short URL can't be created, please try again below: </h3>
                 </section>
-                <form action="/POST/url_resource" method="POST">
+                <form action="/api/url_resource" method="POST">
                      <div class="gorup">
-                        <label for="originalURL" class="originalURL">Enter a long URL </label> 
+                        <label for="originalURL" class="originalURL">Enter a long URL </label>
                         <br>
                         <input  id="originalURL" type="url" name="originalURL" style="width: 375px" placeholder="For example: https://www.google.com/" required="required">
                         <br>
@@ -110,5 +110,5 @@
                 </form>
             </div>
         </section>
-    </body>    	
+    </body>
 </html>

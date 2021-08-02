@@ -30,7 +30,7 @@ func main() {
 	router.HandleFunc("/", controller.Index).Methods("GET")
 
 	//Creat Short URL
-	router.HandleFunc("/POST/url_resource", controller.CreateURL).Methods("POST")
+	router.HandleFunc("/api/url_resource", controller.CreateURL).Methods("POST")
 
 	//Redirect Original URL
 	router.HandleFunc("/{id}", controller.Redirect).Methods("GET")
