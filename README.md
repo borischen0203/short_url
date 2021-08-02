@@ -1,8 +1,9 @@
 # **Go URL Shortener using MongoDB**
 
 #### Introduce
-    This is a prototype of URL Shortener project. You can find the other one that I rewrite in my repo.
-    The new version is pure backend part without UI, I used gin framework and make code more readable.
+    This is a prototype of URL Shortener project. You can find the other one that I rewrite
+    in my repo. The new version is pure backend part without UI, I used gin framework and
+    make code more readable.
 
 
 <p align="left">
@@ -51,7 +52,3 @@
     - MongoDB
     - HTML
     - CSS
-
-### Advanced
-    You may see a project - URL-shortener in my repo.
-
