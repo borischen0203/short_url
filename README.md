@@ -53,3 +53,4 @@
     - MongoDB
     - HTML
     - CSS
+    - Go
