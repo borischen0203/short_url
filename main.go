@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	controller "short_url/controller"
 	mongoDB "short_url/module"
@@ -36,5 +37,14 @@ func main() {
 	router.HandleFunc("/{id}", controller.Redirect).Methods("GET")
 
 	//Server listen at port 8000
-	log.Fatal(http.ListenAndServe(":8000", router))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
+		log.Printf("Defaulting to port %s", port)
+	}
+
+	log.Printf("Listening on port %s", port)
+	if err := http.ListenAndServe(":"+port, router); err != nil {
+		log.Fatal(err)
+	}
 }
