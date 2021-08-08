@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"os"
 	"path"
 	mongoDB "short_url/module"
 	"strings"
@@ -25,6 +26,7 @@ import (
 
 var tpl *template.Template
 var hostNumber string
+var host string
 
 // NotAvailable ....
 type NotAvailable struct {
@@ -57,6 +59,9 @@ func Init() {
 //Index function show the home page of server.
 func Index(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("Show home page")
+	if host = os.Getenv("HOST"); host == "" {
+		host = "http://localhost:8000/"
+	}
 	Init()
 	// var Host HostNumber
 	// hostNumber = request.Host
@@ -99,7 +104,7 @@ func CreateURL(w http.ResponseWriter, r *http.Request) {
 
 	var res NotAvailable
 	//Check URL domain, forbidden input http://localhost:8000
-	forbiddenInput := "http://localhost:8000"
+	forbiddenInput := host
 	if strings.Contains(request.OriginalURL, forbiddenInput) {
 		res.Title = "URL domain banned"
 		tpl.ExecuteTemplate(w, "notAvailable.html", res)
@@ -136,7 +141,7 @@ func CreateWithAlias(request RequestData) ResponseData {
 	collection.FindOne(context.Background(), bson.M{"ID": request.Alias}).Decode(&response)
 	if (response == ResponseData{}) { //The custom alias is available
 		response.ID = request.Alias
-		response.ShortURL = "http://localhost:8000/" + response.ID
+		response.ShortURL = host + response.ID
 		response.OriginalURL = request.OriginalURL
 		collection.InsertOne(context.TODO(), bson.M{
 			"ID":          response.ID,
@@ -167,7 +172,7 @@ func CreateWithoutAlias(request RequestData) ResponseData {
 
 	if (response == ResponseData{}) {
 		response.ID = ProduceUniqueID()
-		response.ShortURL = "http://localhost:8000/" + response.ID
+		response.ShortURL = host + response.ID
 		response.OriginalURL = request.OriginalURL
 		collection.InsertOne(context.TODO(), bson.M{
 			"ID":          response.ID,
