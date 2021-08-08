@@ -26,7 +26,8 @@ import (
 
 var tpl *template.Template
 var hostNumber string
-var host string
+var Host string
+var collection string
 
 // NotAvailable ....
 type NotAvailable struct {
@@ -59,15 +60,25 @@ func Init() {
 //Index function show the home page of server.
 func Index(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("Show home page")
-	if host = os.Getenv("HOST"); host == "" {
-		host = "http://localhost:8000/"
+	if Host = os.Getenv("HOST"); Host == "" {
+		Host = "http://localhost:8000/"
 	}
+	if collection = os.Getenv("Collection"); collection == "" {
+		collection = "url_table"
+	}
+	data := struct {
+		HostDomain string
+	}{
+		HostDomain: Host,
+	}
+
 	Init()
 	// var Host HostNumber
 	// hostNumber = request.Host
 	// Host.PortNumber = request.Host
 	// tpl.ExecuteTemplate(writer, "app.html", Host)
-	err := tpl.ExecuteTemplate(writer, "index.html", nil)
+
+	err := tpl.ExecuteTemplate(writer, "index.html", data)
 	if err != nil {
 		writer.WriteHeader(400)
 		writer.Write([]byte("error load index.html"))
@@ -104,7 +115,7 @@ func CreateURL(w http.ResponseWriter, r *http.Request) {
 
 	var res NotAvailable
 	//Check URL domain, forbidden input http://localhost:8000
-	forbiddenInput := host
+	forbiddenInput := Host
 	if strings.Contains(request.OriginalURL, forbiddenInput) {
 		res.Title = "URL domain banned"
 		tpl.ExecuteTemplate(w, "notAvailable.html", res)
@@ -137,11 +148,11 @@ func CreateWithAlias(request RequestData) ResponseData {
 	 * 	exist long URL and exist custom Alias         -> get previous short URL
 	 */
 	var response ResponseData
-	collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
+	collection := mongoDB.MongoClient.Database("url_database").Collection(collection)
 	collection.FindOne(context.Background(), bson.M{"ID": request.Alias}).Decode(&response)
 	if (response == ResponseData{}) { //The custom alias is available
 		response.ID = request.Alias
-		response.ShortURL = host + response.ID
+		response.ShortURL = Host + response.ID
 		response.OriginalURL = request.OriginalURL
 		collection.InsertOne(context.TODO(), bson.M{
 			"ID":          response.ID,
@@ -167,12 +178,12 @@ func CreateWithoutAlias(request RequestData) ResponseData {
 	 *  also create a new short URL
 	 */
 	var response ResponseData
-	collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
+	collection := mongoDB.MongoClient.Database("url_database").Collection(collection)
 	collection.FindOne(context.Background(), bson.M{"OriginalURL": request.OriginalURL, "IsAlias": false}).Decode(&response)
 
 	if (response == ResponseData{}) {
 		response.ID = ProduceUniqueID()
-		response.ShortURL = host + response.ID
+		response.ShortURL = Host + response.ID
 		response.OriginalURL = request.OriginalURL
 		collection.InsertOne(context.TODO(), bson.M{
 			"ID":          response.ID,
@@ -189,7 +200,7 @@ func CreateWithoutAlias(request RequestData) ResponseData {
 func Redirect(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Into Redirect")
 	params := mux.Vars(r)
-	collection := mongoDB.MongoClient.Database("url_database").Collection("url_table")
+	collection := mongoDB.MongoClient.Database("url_database").Collection(collection)
 	var response ResponseData
 	collection.FindOne(context.Background(), bson.M{"ID": params["id"]}).Decode(&response)
 	if (response != ResponseData{}) { //Find the Short URL
