@@ -31,7 +31,8 @@ var collection string
 
 // NotAvailable ....
 type NotAvailable struct {
-	Title string
+	Title      string
+	HostDomain string
 }
 
 //RequestData constructor creates two parts: OriginalURL and Alias. which are a string and a string, respectively.
@@ -118,6 +119,7 @@ func CreateURL(w http.ResponseWriter, r *http.Request) {
 	forbiddenInput := Host
 	if strings.Contains(request.OriginalURL, forbiddenInput) {
 		res.Title = "URL domain banned"
+		res.HostDomain = Host
 		tpl.ExecuteTemplate(w, "notAvailable.html", res)
 		return
 	}
@@ -130,6 +132,7 @@ func CreateURL(w http.ResponseWriter, r *http.Request) {
 		requestData := CreateWithAlias(request)
 		if (requestData == ResponseData{}) { // Custom alias is not available
 			res.Title = "Alias is not available"
+			res.HostDomain = Host
 			tpl.ExecuteTemplate(w, "notAvailable.html", res)
 		} else { //Custom alias is available
 			tpl.ExecuteTemplate(w, "create.html", requestData)
