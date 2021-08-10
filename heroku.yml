@@ -1,5 +1,9 @@
+# setup:
+#   config:
+#     Collection: $Collection
+#     HOST: $HOST
 build:
   docker:
     web: Dockerfile
 run:
-  web: bundle exec puma -C config/puma.rb
+  web: /app/main
