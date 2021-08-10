@@ -1,15 +1,13 @@
 FROM golang:1.16-alpine
-# RUN apk add --no-cache git
 WORKDIR /app
+ADD . /app
 
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
 
-COPY *.go ./
-
-RUN go build -o /short_url
+RUN cd /app && go build -o main
 
 EXPOSE 8000
 
-CMD [ "/short_url" ]
+CMD [ "/app/main" ]
