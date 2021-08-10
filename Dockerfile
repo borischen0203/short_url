@@ -8,6 +8,4 @@ RUN go mod download
 
 RUN cd /app && go build -o main
 
-EXPOSE 8000
-
 CMD [ "/app/main" ]
