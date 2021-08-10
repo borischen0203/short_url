@@ -15,9 +15,10 @@ import (
 	"net/http"
 	"os"
 	"path"
-	mongoDB "short_url/module"
 	"strings"
 	"time"
+
+	mongoDB "github.com/borischen0203/short_url/module"
 
 	"github.com/gorilla/mux"
 	"github.com/speps/go-hashids"

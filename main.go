@@ -14,8 +14,8 @@ import (
 	"net/http"
 	"os"
 
-	controller "short_url/controller"
-	mongoDB "short_url/module"
+	controller "github.com/borischen0203/short_url/controller"
+	mongoDB "github.com/borischen0203/short_url/module"
 
 	"github.com/gorilla/mux"
 )

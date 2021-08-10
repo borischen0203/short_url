@@ -1,12 +1,10 @@
-module short_url
+module github.com/borischen0203/short_url
 
-go 1.15
+go 1.16
 
 require (
-	github.com/go-redis/redis/v8 v8.4.4
 	github.com/gorilla/mux v1.8.0
 	github.com/speps/go-hashids v2.0.0+incompatible
-	github.com/stretchr/testify v1.6.1
-	go.mongodb.org/mongo-driver v1.4.4
-	golang.org/x/tools/gopls v0.6.1 // indirect
+	github.com/stretchr/testify v1.7.0
+	go.mongodb.org/mongo-driver v1.7.1
 )
