@@ -1,9 +1,0 @@
-# setup:
-#   config:
-#     Collection: $Collection
-#     HOST: $HOST
-build:
-  docker:
-    web: Dockerfile
-run:
-  web: /app/main
