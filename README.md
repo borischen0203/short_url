@@ -2,6 +2,8 @@
 
 ## Demo Link
 
+ - The app may sleep without using. Just wait for a few seconds to wake it up.
+
 ```
 https://url-demo.herokuapp.com/
 ```
