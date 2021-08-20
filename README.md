@@ -1,29 +1,37 @@
 # **Go URL Shortener using MongoDB**
 
-#### Introduce
-    This is a prototype of URL Shortener project. You can find the other one that I rewrite
-    in my repo. The new version is pure backend part without UI, I used gin framework and
-    make code more readable.
-    Link: https://github.com/borischen0203/URL-shortener
+## Demo Link
 
+```
+https://url-demo.herokuapp.com/
+```
 <p align="left">
     <img src="https://i.imgur.com/z2YPfa2.png" alt="Sample"  width="623" height="365" >
     <p align="left">
 </p>
 
-#### Features:
+## Introduce
+    This is a prototype of URL Shortener project. You can find the other one that I rewrite
+    in my repo. The new version is pure backend part without UI, I used gin framework and
+    make code more readable.
+    Link: https://github.com/borischen0203/URL-shortener
+
+
+
+## Features:
 
       1. Generate short URL from long URL
       2. Redirect to long URL by generated URL
       3. URL generation supports custom alias
 
 
-### How to run
+## How to run
 ```
     $ go run main.go
 ```
 
-#### Instruction:
+### Instruction:
+Local
 
       1. Execute main.go file.
       2. Open browser on http://localhots:8000/
@@ -40,7 +48,7 @@
 </p>
 
 ```
-   7. If the page shows the Alias is not available, please try another one!
+   7. If the page shows the Alias is not available(be used), please try another one!
 ```
 
 <p align="left">
@@ -49,8 +57,9 @@
 
     8. Input the generated short URL in browser, it will redirect to original URL.
 
-### Tech Stack
+## Tech Stack
     - MongoDB
     - HTML
     - CSS
     - Go
+    - Heroku deploy
