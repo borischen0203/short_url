@@ -4,9 +4,8 @@
 
  - The app may sleep without using. Just wait for a few seconds to wake it up.
 
-```
-https://url-demo.herokuapp.com/
-```
+- https://url-demo.herokuapp.com/
+
 <p align="left">
     <img src="https://i.imgur.com/z2YPfa2.png" alt="Sample"  width="623" height="365" >
     <p align="left">
@@ -22,18 +21,15 @@ https://url-demo.herokuapp.com/
 
 ## Features:
 
-      1. Generate short URL from long URL
-      2. Redirect to long URL by generated URL
-      3. URL generation supports custom alias
+- Generate short URL from long URL
+- Redirect to long URL by generated URL
+- URL generation supports custom alias
 
 
-## How to run
-```
-    $ go run main.go
-```
+## How to run in local
+
 
 ### Instruction:
-Local
 
       1. Execute main.go file.
       2. Open browser on http://localhots:8000/
